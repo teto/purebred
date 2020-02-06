@@ -39,6 +39,8 @@ browseThreadsKeybindings =
     , Keybinding (V.EvKey V.KUp []) (listUp `chain` continue)
     , Keybinding (V.EvKey (V.KChar 'G') []) (listJumpToEnd `chain` continue)
     , Keybinding (V.EvKey (V.KChar '1') []) (listJumpToStart `chain` continue)
+    , Keybinding (V.EvKey (V.KChar ' ') []) (toggleListItem `chain` continue)
+    , Keybinding (V.EvKey (V.KChar 't') []) (toggleListItem `chain` continue)
     ]
 
 searchThreadsKeybindings :: [Keybinding 'Threads 'SearchThreadsEditor]

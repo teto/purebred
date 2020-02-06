@@ -120,7 +120,7 @@ search and composes e-mails from here.
 -}
 data MailIndex = MailIndex
     { _miListOfMails  :: ListWithLength V.Vector NotmuchMail
-    , _miListOfThreads :: ListWithLength V NotmuchThread
+    , _miListOfThreads :: ListWithLength V (SelectableItem NotmuchThread)
     , _miListOfThreadsGeneration :: Generation
     , _miSearchThreadsEditor :: E.Editor T.Text Name
     , _miMailTagsEditor :: E.Editor T.Text Name
@@ -131,13 +131,13 @@ data MailIndex = MailIndex
 miMails :: Lens' MailIndex (ListWithLength V.Vector NotmuchMail)
 miMails = lens _miListOfMails (\m v -> m { _miListOfMails = v })
 
-miThreads :: Lens' MailIndex (ListWithLength V NotmuchThread)
+miThreads :: Lens' MailIndex (ListWithLength V (SelectableItem NotmuchThread))
 miThreads = lens _miListOfThreads (\m v -> m { _miListOfThreads = v})
 
 miListOfMails :: Lens' MailIndex (L.GenericList Name V.Vector NotmuchMail)
 miListOfMails = miMails . listList
 
-miListOfThreads :: Lens' MailIndex (L.GenericList Name V NotmuchThread)
+miListOfThreads :: Lens' MailIndex (L.GenericList Name V (SelectableItem NotmuchThread))
 miListOfThreads = miThreads . listList
 
 miListOfThreadsGeneration :: Lens' MailIndex Generation
