@@ -139,21 +139,18 @@ module Purebred (
 
 import UI.App (theApp, initialState)
 
+import Purebred.System.Logging (setupLogsink)
 import qualified Config.Dyre as Dyre
-import Control.Concurrent (forkIO)
-import Control.Concurrent.STM (atomically, newTQueueIO, readTQueue, writeTQueue)
 import qualified Control.DeepSeq
-import Control.Monad ((>=>), forever, void)
+import Control.Monad ((>=>), void)
 import Options.Applicative hiding (str)
 import qualified Options.Applicative.Builder as Builder
 import Data.List (elemIndex, isInfixOf, isPrefixOf)
+import qualified Data.Text as T
 import System.Environment (lookupEnv)
 import System.FilePath (dropTrailingPathSeparator, joinPath, splitPath)
 import System.FilePath.Posix ((</>))
-import System.IO (BufferMode(LineBuffering), IOMode(AppendMode), hSetBuffering, openFile)
 import System.Random (RandomGen, getStdGen, randomRs)
-import qualified Data.Text as T
-import qualified Data.Text.IO as T
 import Data.Version (showVersion)
 import Paths_purebred (version, getLibDir)
 
@@ -248,16 +245,8 @@ launch cfg = do
   bchan <- newBChan 32
 
   -- Create log sink.
-  logSink <- case debugFile opts of
-    Nothing -> pure $ \_ -> pure ()
-    Just fp -> do
-      h <- openFile fp AppendMode
-      hSetBuffering h LineBuffering
-      T.hPutStrLn h $ T.pack "Opened log file"
-      q <- newTQueueIO
-      _ <- forkIO $ forever $ atomically (readTQueue q) >>= T.hPutStrLn h
-      pure $ atomically . writeTQueue q
-
+  logSink <- setupLogsink (debugFile opts)
+  logSink (T.pack "Opened log file")
   cfg' <- processConfig (bchan, b, logSink) (pre cfg)
 
   s <- initialState cfg'
