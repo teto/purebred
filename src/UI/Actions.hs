@@ -1066,7 +1066,7 @@ toggleHeaders = Action
 setTags :: [TagOp] -> Action v ctx ()
 setTags ops =
     Action
-    { _aDescription = ["apply given tags"]
+    { _aDescription = ["apply tag operations: " <> T.intercalate ", " (T.pack . show <$> ops) ]
     , _aAction = do
         w <- gets focusedViewWidget
         case w of
